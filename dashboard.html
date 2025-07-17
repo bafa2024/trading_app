@@ -415,6 +415,7 @@
                 MarketWatch
                 <span class="dropdown-arrow">⌄</span>
             </h1>
+            <button class="logout-btn" id="logoutBtn" style="background: #ef4444; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.4rem; cursor: pointer; font-size: 1rem;">Logout</button>
         </div>
     </header>
 
@@ -466,7 +467,7 @@
     <!-- Bottom Navigation -->
     <nav class="bottom-nav">
         <div class="nav-items">
-            <a href="#" class="nav-item active">
+            <a href="dashboard.html" class="nav-item active">
                 <span class="nav-icon">👁️</span>
                 <span class="nav-label">Market</span>
             </a>
@@ -474,7 +475,7 @@
                 <span class="nav-icon">📋</span>
                 <span class="nav-label">Orders</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="position.html" class="nav-item">
                 <span class="nav-icon">⚡</span>
                 <span class="nav-label">Position</span>
             </a>
@@ -555,6 +556,13 @@
         const dropdownArrow = document.querySelector('.dropdown-arrow');
         dropdownArrow.addEventListener('click', function() {
             this.style.transform = this.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';
+        });
+
+        // Logout button functionality
+        const logoutBtn = document.getElementById('logoutBtn');
+        logoutBtn.addEventListener('click', function() {
+            localStorage.removeItem('isLoggedIn');
+            window.location.href = 'index.html';
         });
     </script>
 </body>

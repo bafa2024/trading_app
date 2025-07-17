@@ -775,6 +775,24 @@
             localStorage.setItem('isLoggedIn', 'true');
             window.location.href = 'dashboard.html';
         };
+
+        // Also link the "Get Started" button to dashboard
+        document.querySelector('.btn-primary').onclick = function() {
+            localStorage.setItem('isLoggedIn', 'true');
+            window.location.href = 'dashboard.html';
+        };
+
+        // Link Start Trading Now" button to dashboard
+        document.querySelector('.hero .btn-primary').onclick = function() {
+            localStorage.setItem('isLoggedIn', 'true');
+            window.location.href = 'dashboard.html';
+        };
+
+        // Link "Create Free Account" button to dashboard
+        document.querySelector('.cta .btn-primary').onclick = function() {
+            localStorage.setItem('isLoggedIn', 'true');
+            window.location.href = 'dashboard.html';
+        };
     </script>
 </body>
 </html>

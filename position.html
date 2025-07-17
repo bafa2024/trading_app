@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Position - Trading Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #0f1823;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Main Container */
+        .main-container {
+            flex: 1;
+            padding-bottom: 80px;
+        }
+
+        /* Funds Section */
+        .funds-section {
+            background: #1a2332;
+            padding: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .funds-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .funds-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            color: #e2e8f0;
+        }
+
+        .funds-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+        }
+
+        .fund-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .fund-label {
+            font-size: 0.875rem;
+            color: #718096;
+            font-weight: 400;
+        }
+
+        .fund-value {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #ffffff;
+            display: flex;
+            align-items: baseline;
+            gap: 0.25rem;
+        }
+
+        .currency-symbol {
+            font-size: 1.5rem;
+        }
+
+        /* Position Section */
+        .position-section {
+            background: #0f1823;
+            flex: 1;
+        }
+
+        .position-header {
+            background: #1a2332;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .position-header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .position-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .position-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-btn, .expand-btn {
+            background: transparent;
+            border: none;
+            color: #718096;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover, .expand-btn:hover {
+            color: #e2e8f0;
+        }
+
+        /* Tabs */
+        .tabs-section {
+            background: #0f1823;
+            border-bottom: 2px solid #1a2332;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .tabs-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            padding: 0 2rem;
+        }
+
+        .tab {
+            padding: 1.25rem 3rem;
+            cursor: pointer;
+            color: #718096;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s;
+            background: transparent;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .tab:hover {
+            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab.active {
+            color: #4299e1;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #4299e1;
+        }
+
+        /* Total P&L Section */
+        .total-pnl-section {
+            background: #1a2332;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .total-pnl-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .pnl-label {
+            font-size: 0.875rem;
+            color: #718096;
+        }
+
+        .pnl-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #48bb78;
+        }
+
+        .pnl-value.negative {
+            color: #f56565;
+        }
+
+        /* Empty State */
+        .empty-state-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            min-height: 400px;
+        }
+
+        .empty-illustration {
+            width: 200px;
+            height: 150px;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .folder-icon {
+            width: 120px;
+            height: 100px;
+            background: #2d3748;
+            border-radius: 0.5rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .folder-tab {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            width: 40px;
+            height: 20px;
+            background: #f6ad55;
+            border-radius: 0.25rem 0.25rem 0 0;
+        }
+
+        .chart-line {
+            width: 60px;
+            height: 40px;
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .chart-line svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .empty-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #e2e8f0;
+        }
+
+        .empty-subtitle {
+            color: #718096;
+            font-size: 0.875rem;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1a2332;
+            border-top: 1px solid #2d3748;
+            padding: 1rem 0;
+            z-index: 100;
+        }
+
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            color: #718096;
+            transition: color 0.3s;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+        }
+
+        .nav-item:hover {
+            color: #e2e8f0;
+        }
+
+        .nav-item.active {
+            color: #4299e1;
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+        }
+
+        .nav-label {
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .funds-section {
+                padding: 1.5rem 1rem;
+            }
+
+            .funds-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+
+            .fund-value {
+                font-size: 1.5rem;
+            }
+
+            .position-header {
+                padding: 1rem;
+            }
+
+            .position-title {
+                font-size: 1.25rem;
+            }
+
+            .tabs-container {
+                padding: 0 1rem;
+            }
+
+            .tab {
+                padding: 1rem 1.5rem;
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .empty-state-container {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(-50%, -50%) translateY(0);
+            }
+            50% {
+                transform: translate(-50%, -50%) translateY(-10px);
+            }
+        }
+
+        .folder-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Funds Section -->
+        <div class="funds-section">
+            <div class="funds-container">
+                <h2 class="funds-title">Funds</h2>
+                <div class="funds-grid">
+                    <div class="fund-item">
+                        <div class="fund-label">Ledger Balance</div>
+                        <div class="fund-value">
+                            <span class="currency-symbol">₹</span>19871955
+                        </div>
+                    </div>
+                    <div class="fund-item">
+                        <div class="fund-label">Margin Available</div>
+                        <div class="fund-value">
+                            <span class="currency-symbol">₹</span>19871955
+                        </div>
+                    </div>
+                    <div class="fund-item">
+                        <div class="fund-label">Margin Used</div>
+                        <div class="fund-value">
+                            <span class="currency-symbol">₹</span>0
+                        </div>
+                    </div>
+                    <div class="fund-item">
+                        <div class="fund-label">M2M</div>
+                        <div class="fund-value">
+                            <span class="currency-symbol">₹</span>0
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Position Section -->
+        <div class="position-section">
+            <!-- Position Header -->
+            <div class="position-header">
+                <div class="position-header-content">
+                    <h1 class="position-title">Position</h1>
+                    <div class="position-actions">
+                        <button class="search-btn" title="Search">🔍</button>
+                        <button class="expand-btn" title="Expand">⌄</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs-section">
+                <div class="tabs-container">
+                    <button class="tab" data-tab="closed">Closed</button>
+                    <button class="tab active" data-tab="position">Position</button>
+                    <button class="tab" data-tab="active">Active</button>
+                </div>
+            </div>
+
+            <!-- Total P&L -->
+            <div class="total-pnl-section">
+                <div class="total-pnl-container">
+                    <span class="pnl-label">Total P&L</span>
+                    <span class="pnl-value">0.00</span>
+                </div>
+            </div>
+
+            <!-- Position Content -->
+            <div class="position-content">
+                <!-- Position Tab (Active) -->
+                <div class="position-list" id="positionTab">
+                    <div class="empty-state-container">
+                        <div class="empty-illustration">
+                            <div class="folder-icon">
+                                <div class="folder-tab"></div>
+                                <div class="chart-line">
+                                    <svg viewBox="0 0 60 40">
+                                        <polyline 
+                                            points="5,35 15,25 25,30 35,15 45,20 55,10" 
+                                            stroke="#4299e1" 
+                                            stroke-width="2" 
+                                            fill="none"
+                                        />
+                                        <circle cx="35" cy="15" r="3" fill="#4299e1"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <h3 class="empty-title">No Positions</h3>
+                        <p class="empty-subtitle">Place an order from watchlist</p>
+                    </div>
+                </div>
+
+                <!-- Closed Tab (Hidden) -->
+                <div class="position-list" id="closedTab" style="display: none;">
+                    <div class="empty-state-container">
+                        <div class="empty-illustration">
+                            <div class="folder-icon">
+                                <div class="folder-tab"></div>
+                            </div>
+                        </div>
+                        <h3 class="empty-title">No Closed Positions</h3>
+                        <p class="empty-subtitle">Your closed positions will appear here</p>
+                    </div>
+                </div>
+
+                <!-- Active Tab (Hidden) -->
+                <div class="position-list" id="activeTab" style="display: none;">
+                    <div class="empty-state-container">
+                        <div class="empty-illustration">
+                            <div class="folder-icon">
+                                <div class="folder-tab"></div>
+                            </div>
+                        </div>
+                        <h3 class="empty-title">No Active Positions</h3>
+                        <p class="empty-subtitle">Your active positions will appear here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-items">
+            <a href="#" class="nav-item">
+                <span class="nav-icon">👁️</span>
+                <span class="nav-label">Market</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">📋</span>
+                <span class="nav-label">Orders</span>
+            </a>
+            <a href="#" class="nav-item active">
+                <span class="nav-icon">⚡</span>
+                <span class="nav-label">Position</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">DEMOMAHA</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Tab switching functionality
+        const tabs = document.querySelectorAll('.tab');
+        const positionLists = {
+            closed: document.getElementById('closedTab'),
+            position: document.getElementById('positionTab'),
+            active: document.getElementById('activeTab')
+        };
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Hide all position lists
+                Object.values(positionLists).forEach(list => {
+                    list.style.display = 'none';
+                });
+                
+                // Show selected position list
+                const selectedTab = this.dataset.tab;
+                if (positionLists[selectedTab]) {
+                    positionLists[selectedTab].style.display = 'block';
+                }
+            });
+        });
+
+        // Bottom navigation functionality
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                navItems.forEach(n => n.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Search button functionality
+        document.querySelector('.search-btn').addEventListener('click', function() {
+            console.log('Search positions');
+            // Implement search functionality
+        });
+
+        // Expand button functionality
+        document.querySelector('.expand-btn').addEventListener('click', function() {
+            this.style.transform = this.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';
+            // Implement expand/collapse functionality
+        });
+
+        // Format currency values
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+
+        // Update P&L color based on value
+        function updatePnLColor() {
+            const pnlValue = document.querySelector('.pnl-value');
+            const value = parseFloat(pnlValue.textContent);
+            
+            if (value < 0) {
+                pnlValue.classList.add('negative');
+            } else {
+                pnlValue.classList.remove('negative');
+            }
+        }
+
+        // Mock function to update funds (for demonstration)
+        function updateFunds(data) {
+            // This would be connected to your real-time data feed
+            if (data) {
+                // Update fund values
+                console.log('Updating funds:', data);
+            }
+        }
+
+        // Mock function to add positions
+        function addPosition(positionData) {
+            // This would create position cards when positions are opened
+            console.log('Adding position:', positionData);
+        }
+
+        // Initialize
+        updatePnLColor();
+    </script>
+</body>
+</html>

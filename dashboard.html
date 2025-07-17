@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarketWatch - Trading Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #0f1823;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Top Banner */
+        .top-banner {
+            background: linear-gradient(90deg, #1a2332 0%, #0f1823 100%);
+            padding: 0.75rem 2rem;
+            font-size: 0.9rem;
+            color: #a0aec0;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Main Header */
+        .main-header {
+            background: #1a2332;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header-title {
+            font-size: 2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dropdown-arrow {
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .dropdown-arrow:hover {
+            transform: translateY(2px);
+        }
+
+        /* Market Tabs */
+        .market-tabs {
+            background: #0f1823;
+            padding: 0 2rem;
+            border-bottom: 2px solid #1a2332;
+        }
+
+        .tabs-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .tabs-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            color: #718096;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s;
+            white-space: nowrap;
+            background: transparent;
+            border: none;
+            font-size: 0.95rem;
+        }
+
+        .tab:hover {
+            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab.active {
+            color: #4299e1;
+            background: rgba(66, 153, 225, 0.1);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #4299e1;
+        }
+
+        /* Search Section */
+        .search-section {
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #718096;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            background: #1a2332;
+            border: 1px solid #2d3748;
+            border-radius: 0.5rem;
+            color: #ffffff;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4299e1;
+            background: #2d3748;
+        }
+
+        .search-input::placeholder {
+            color: #718096;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            padding: 0.75rem;
+            background: #1a2332;
+            border: 1px solid #2d3748;
+            border-radius: 0.5rem;
+            color: #718096;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon:hover {
+            background: #2d3748;
+            color: #e2e8f0;
+        }
+
+        .btn-add {
+            padding: 0.75rem 1.5rem;
+            background: #4299e1;
+            border: none;
+            border-radius: 0.5rem;
+            color: #ffffff;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-add:hover {
+            background: #3182ce;
+            transform: translateY(-1px);
+        }
+
+        /* Watchlist Content */
+        .watchlist-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-illustration {
+            width: 200px;
+            height: 150px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+
+        .chart-icon {
+            position: absolute;
+            width: 120px;
+            height: 80px;
+            background: #2d3748;
+            border-radius: 0.5rem;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .chart-line {
+            width: 80%;
+            height: 2px;
+            background: #4299e1;
+            position: relative;
+        }
+
+        .chart-line::before,
+        .chart-line::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #4299e1;
+            border-radius: 50%;
+            top: -2px;
+        }
+
+        .chart-line::before {
+            left: 20%;
+        }
+
+        .chart-line::after {
+            right: 10%;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #e2e8f0;
+        }
+
+        .empty-subtitle {
+            color: #718096;
+            margin-bottom: 2rem;
+        }
+
+        .btn-deposit {
+            padding: 1rem 3rem;
+            background: #4299e1;
+            border: none;
+            border-radius: 0.5rem;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-deposit:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1a2332;
+            border-top: 1px solid #2d3748;
+            padding: 1rem 0;
+        }
+
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            color: #718096;
+            transition: color 0.3s;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+        }
+
+        .nav-item:hover {
+            color: #e2e8f0;
+        }
+
+        .nav-item.active {
+            color: #4299e1;
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+        }
+
+        .nav-label {
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .top-banner {
+                font-size: 0.8rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .main-header {
+                padding: 1rem;
+            }
+
+            .header-title {
+                font-size: 1.5rem;
+            }
+
+            .market-tabs {
+                padding: 0 1rem;
+            }
+
+            .tab {
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            .search-section {
+                padding: 1rem;
+            }
+
+            .search-container {
+                flex-wrap: wrap;
+            }
+
+            .action-buttons {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .empty-state {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Hover effect for chart icon */
+        .chart-icon:hover {
+            transform: translate(-50%, -50%) rotate(-10deg) scale(1.05);
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Banner -->
+    <div class="top-banner">
+        Trade smart, trade happy. Let your profits smile back at you! May your trades be profitable and your mindset always positive!
+    </div>
+
+    <!-- Main Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <h1 class="header-title">
+                MarketWatch
+                <span class="dropdown-arrow">⌄</span>
+            </h1>
+        </div>
+    </header>
+
+    <!-- Market Tabs -->
+    <div class="market-tabs">
+        <div class="tabs-container">
+            <button class="tab" data-market="NSEFUT">NSEFUT</button>
+            <button class="tab" data-market="NSEOPT">NSEOPT</button>
+            <button class="tab" data-market="MCXFUT">MCXFUT</button>
+            <button class="tab" data-market="MCXOPT">MCXOPT</button>
+            <button class="tab" data-market="NSE-EQ">NSE-EQ</button>
+            <button class="tab" data-market="BSE-FUT">BSE-FUT</button>
+            <button class="tab" data-market="BSE-OPT">BSE-OPT</button>
+            <button class="tab" data-market="CRYPTO">CRYPTO</button>
+            <button class="tab" data-market="FOREX">FOREX</button>
+            <button class="tab" data-market="COMEX">COMEX</button>
+            <button class="tab active" data-market="GLOBALINDEX">GLOBALINDEX</button>
+        </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section">
+        <div class="search-container">
+            <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" placeholder="Search Symbols">
+            </div>
+            <div class="action-buttons">
+                <button class="btn-icon" title="Delete">🗑️</button>
+                <button class="btn-add">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Watchlist Content -->
+    <div class="watchlist-content">
+        <div class="empty-state">
+            <div class="empty-illustration">
+                <div class="chart-icon">
+                    <div class="chart-line"></div>
+                </div>
+            </div>
+            <h2 class="empty-title">Add GLOBALINDEX Scripts to Watchlist</h2>
+            <p class="empty-subtitle">Add stocks from Add button</p>
+            <button class="btn-deposit">Deposit Money</button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-items">
+            <a href="#" class="nav-item active">
+                <span class="nav-icon">👁️</span>
+                <span class="nav-label">Market</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">📋</span>
+                <span class="nav-label">Orders</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⚡</span>
+                <span class="nav-label">Position</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">DEMOMAHA</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Tab switching functionality
+        const tabs = document.querySelectorAll('.tab');
+        const emptyTitle = document.querySelector('.empty-title');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Update empty state title
+                const marketName = this.dataset.market;
+                emptyTitle.textContent = `Add ${marketName} Scripts to Watchlist`;
+                
+                // Add animation
+                const emptyState = document.querySelector('.empty-state');
+                emptyState.style.animation = 'none';
+                setTimeout(() => {
+                    emptyState.style.animation = 'fadeIn 0.6s ease-out';
+                }, 10);
+            });
+        });
+
+        // Search functionality
+        const searchInput = document.querySelector('.search-input');
+        searchInput.addEventListener('focus', function() {
+            this.placeholder = 'Type to search stocks, indices, F&O...';
+        });
+        
+        searchInput.addEventListener('blur', function() {
+            if (!this.value) {
+                this.placeholder = 'Search Symbols';
+            }
+        });
+
+        // Bottom navigation
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                navItems.forEach(n => n.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Add button functionality
+        const addBtn = document.querySelector('.btn-add');
+        addBtn.addEventListener('click', function() {
+            alert('Add stocks functionality would open a stock selection modal here');
+        });
+
+        // Deposit button functionality
+        const depositBtn = document.querySelector('.btn-deposit');
+        depositBtn.addEventListener('click', function() {
+            alert('Deposit functionality would redirect to the deposit page');
+        });
+
+        // Delete button functionality
+        const deleteBtn = document.querySelector('.btn-icon');
+        deleteBtn.addEventListener('click', function() {
+            alert('Delete functionality for managing watchlist items');
+        });
+
+        // Header dropdown
+        const dropdownArrow = document.querySelector('.dropdown-arrow');
+        dropdownArrow.addEventListener('click', function() {
+            this.style.transform = this.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';
+        });
+    </script>
+</body>
+</html>

@@ -522,7 +522,7 @@
                 <li><a href="#about">About</a></li>
             </ul>
             <div class="auth-buttons">
-                <button class="btn btn-outline">Sign In</button>
+                <button class="btn btn-outline" id="signInBtn">Sign In</button>
                 <button class="btn btn-primary">Get Started</button>
             </div>
         </nav>
@@ -769,6 +769,12 @@
         document.querySelectorAll('.feature-card, .stat-item').forEach(el => {
             observer.observe(el);
         });
+
+        // Demo login: redirect to dashboard
+        document.getElementById('signInBtn').onclick = function() {
+            localStorage.setItem('isLoggedIn', 'true');
+            window.location.href = 'dashboard.html';
+        };
     </script>
 </body>
 </html>

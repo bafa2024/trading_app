@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deposit - Trading Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #0f1823;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Main Container */
+        .main-container {
+            flex: 1;
+            padding-bottom: 80px;
+        }
+
+        /* Header Section */
+        .header-section {
+            background: #1a2332;
+            padding: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-content {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .dropdown-arrow {
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        /* QR Code Section */
+        .qr-section {
+            background: #1a2332;
+            padding: 3rem 2rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .qr-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .qr-code-wrapper {
+            display: inline-block;
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            display: block;
+        }
+
+        .upi-info {
+            background: #2d3748;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .upi-id {
+            font-size: 1.1rem;
+            font-family: monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-btn {
+            padding: 0.5rem 1.5rem;
+            background: #4a5568;
+            border: none;
+            border-radius: 0.5rem;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .copy-btn:hover {
+            background: #718096;
+            transform: translateY(-1px);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+
+        .bank-details-btn {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.75rem 2rem;
+            background: transparent;
+            border: 1px solid #4299e1;
+            border-radius: 0.5rem;
+            color: #4299e1;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .bank-details-btn:hover {
+            background: rgba(66, 153, 225, 0.1);
+        }
+
+        /* Deposit Form Section */
+        .deposit-form-section {
+            padding: 2rem;
+            background: #0f1823;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #e2e8f0;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.75rem;
+            color: #718096;
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            background: #1a2332;
+            border: 1px solid #2d3748;
+            border-radius: 0.5rem;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4299e1;
+            background: #2d3748;
+        }
+
+        .form-input::placeholder {
+            color: #4a5568;
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-upload-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #1a2332;
+            border: 1px solid #2d3748;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload-label:hover {
+            border-color: #4299e1;
+            background: #2d3748;
+        }
+
+        .file-upload-btn {
+            padding: 0.5rem 1rem;
+            background: #e2e8f0;
+            color: #1a202c;
+            border-radius: 0.25rem;
+            font-weight: 500;
+        }
+
+        .file-upload-text {
+            color: #718096;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1.25rem;
+            background: #4299e1;
+            border: none;
+            border-radius: 0.5rem;
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 2rem;
+        }
+
+        .submit-btn:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(66, 153, 225, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1a2332;
+            border-top: 1px solid #2d3748;
+            padding: 1rem 0;
+            z-index: 100;
+        }
+
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            color: #718096;
+            transition: color 0.3s;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+        }
+
+        .nav-item:hover {
+            color: #e2e8f0;
+        }
+
+        .nav-item.active {
+            color: #4299e1;
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+        }
+
+        .nav-label {
+            font-size: 0.875rem;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 2rem;
+            background: #48bb78;
+            color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-section {
+                padding: 1.5rem 1rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .qr-section {
+                padding: 2rem 1rem;
+            }
+
+            .qr-code {
+                width: 180px;
+                height: 180px;
+            }
+
+            .upi-info {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .deposit-form-section {
+                padding: 1.5rem 1rem;
+            }
+        }
+
+        /* QR Code Pattern (Simulated) */
+        .qr-pattern {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .qr-pattern::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            right: 10%;
+            bottom: 10%;
+            background: 
+                repeating-linear-gradient(0deg, #000 0px, #000 4px, #fff 4px, #fff 8px),
+                repeating-linear-gradient(90deg, #000 0px, #000 4px, transparent 4px, transparent 8px);
+            opacity: 0.8;
+        }
+
+        .qr-corner {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: #000;
+        }
+
+        .qr-corner.top-left {
+            top: 0;
+            left: 0;
+        }
+
+        .qr-corner.top-right {
+            top: 0;
+            right: 0;
+        }
+
+        .qr-corner.bottom-left {
+            bottom: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header-section">
+            <div class="header-content">
+                <h1 class="page-title">Request</h1>
+                <span class="dropdown-arrow">⌄</span>
+            </div>
+        </div>
+
+        <!-- QR Code Section -->
+        <div class="qr-section">
+            <div class="qr-container">
+                <div class="qr-code-wrapper">
+                    <div class="qr-code">
+                        <div class="qr-pattern">
+                            <div class="qr-corner top-left"></div>
+                            <div class="qr-corner top-right"></div>
+                            <div class="qr-corner bottom-left"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="upi-info">
+                    <span class="upi-id">9617742530@okbizaxis</span>
+                    <button class="copy-btn" onclick="copyUPI()">Copy UPI</button>
+                </div>
+                
+                <button class="bank-details-btn">Show Bank Details</button>
+            </div>
+        </div>
+
+        <!-- Deposit Form -->
+        <div class="deposit-form-section">
+            <div class="form-container">
+                <h2 class="section-title">Deposit</h2>
+                
+                <form id="depositForm">
+                    <div class="form-group">
+                        <label class="form-label" for="depositAmount">Deposit Amount</label>
+                        <input 
+                            type="number" 
+                            id="depositAmount" 
+                            class="form-input" 
+                            placeholder="Enter amount"
+                            min="100"
+                            step="0.01"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <div class="file-upload-wrapper">
+                            <input 
+                                type="file" 
+                                id="fileUpload" 
+                                class="file-upload-input"
+                                accept="image/*,.pdf"
+                                onchange="handleFileSelect(event)"
+                            >
+                            <label for="fileUpload" class="file-upload-label">
+                                <span class="file-upload-btn">Choose File</span>
+                                <span class="file-upload-text" id="fileName">No file chosen</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-items">
+            <a href="#" class="nav-item active">
+                <span class="nav-icon">👁️</span>
+                <span class="nav-label">Market</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">📋</span>
+                <span class="nav-label">Orders</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⚡</span>
+                <span class="nav-label">Position</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">DEMOMAHA</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span id="toastMessage">UPI ID copied!</span>
+    </div>
+
+    <script>
+        // Copy UPI function
+        function copyUPI() {
+            const upiId = '9617742530@okbizaxis';
+            navigator.clipboard.writeText(upiId).then(() => {
+                showToast('UPI ID copied!');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = upiId;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast('UPI ID copied!');
+            });
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Handle file selection
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            const fileName = document.getElementById('fileName');
+            
+            if (file) {
+                fileName.textContent = file.name;
+                fileName.style.color = '#e2e8f0';
+            } else {
+                fileName.textContent = 'No file chosen';
+                fileName.style.color = '#718096';
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('depositForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const amount = document.getElementById('depositAmount').value;
+            const file = document.getElementById('fileUpload').files[0];
+            
+            if (!amount) {
+                showToast('Please enter deposit amount');
+                return;
+            }
+            
+            if (!file) {
+                showToast('Please upload payment proof');
+                return;
+            }
+            
+            // Simulate form submission
+            showToast('Deposit request submitted successfully!');
+            
+            // Reset form after 2 seconds
+            setTimeout(() => {
+                this.reset();
+                document.getElementById('fileName').textContent = 'No file chosen';
+                document.getElementById('fileName').style.color = '#718096';
+            }, 2000);
+        });
+
+        // Show bank details
+        document.querySelector('.bank-details-btn').addEventListener('click', function() {
+            alert('Bank Details:\n\nBank Name: Axis Bank\nAccount Number: 9617742530\nIFSC Code: UTIB0000123\nAccount Name: Trading Platform Pvt Ltd');
+        });
+
+        // Navigation functionality
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                navItems.forEach(n => n.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Dropdown arrow animation
+        const dropdownArrow = document.querySelector('.dropdown-arrow');
+        dropdownArrow.addEventListener('click', function() {
+            this.style.transform = this.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';
+        });
+
+        // Generate a more realistic QR code pattern
+        function generateQRPattern() {
+            const qrPattern = document.querySelector('.qr-pattern');
+            const size = 25;
+            const cellSize = 8;
+            
+            qrPattern.innerHTML = '';
+            
+            // Create corner markers
+            const corners = [
+                { top: '0', left: '0' },
+                { top: '0', right: '0' },
+                { bottom: '0', left: '0' }
+            ];
+            
+            corners.forEach(corner => {
+                const marker = document.createElement('div');
+                marker.style.position = 'absolute';
+                marker.style.width = '60px';
+                marker.style.height = '60px';
+                marker.style.background = '#000';
+                marker.style.border = '8px solid #fff';
+                marker.style.boxSizing = 'border-box';
+                
+                Object.assign(marker.style, corner);
+                
+                const innerMarker = document.createElement('div');
+                innerMarker.style.position = 'absolute';
+                innerMarker.style.width = '24px';
+                innerMarker.style.height = '24px';
+                innerMarker.style.background = '#000';
+                innerMarker.style.top = '50%';
+                innerMarker.style.left = '50%';
+                innerMarker.style.transform = 'translate(-50%, -50%)';
+                
+                marker.appendChild(innerMarker);
+                qrPattern.appendChild(marker);
+            });
+            
+            // Generate random pattern
+            for (let i = 0; i < 100; i++) {
+                const cell = document.createElement('div');
+                cell.style.position = 'absolute';
+                cell.style.width = cellSize + 'px';
+                cell.style.height = cellSize + 'px';
+                cell.style.background = Math.random() > 0.5 ? '#000' : '#fff';
+                cell.style.left = (Math.random() * 80 + 10) + '%';
+                cell.style.top = (Math.random() * 80 + 10) + '%';
+                qrPattern.appendChild(cell);
+            }
+        }
+        
+        // Generate QR pattern on load
+        generateQRPattern();
+    </script>
+</body>
+</html>

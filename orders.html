@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders - Trading Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #0f1823;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Banner */
+        .top-banner {
+            background: linear-gradient(90deg, #1a2332 0%, #0f1823 100%);
+            padding: 0.75rem 2rem;
+            font-size: 0.9rem;
+            color: #a0aec0;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Main Container */
+        .main-container {
+            flex: 1;
+            padding-bottom: 80px;
+        }
+
+        /* Header Section */
+        .header-section {
+            background: #1a2332;
+            padding: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .dropdown-arrow {
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        /* Tabs Section */
+        .tabs-section {
+            background: #0f1823;
+            border-bottom: 2px solid #1a2332;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .tabs-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            padding: 0 2rem;
+        }
+
+        .tab {
+            padding: 1.25rem 3rem;
+            cursor: pointer;
+            color: #718096;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s;
+            background: transparent;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .tab:hover {
+            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab.active {
+            color: #4299e1;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #4299e1;
+        }
+
+        /* Orders List */
+        .orders-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .order-item {
+            background: #1a2332;
+            border: 1px solid #2d3748;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .order-item:hover {
+            background: #2d3748;
+            border-color: #4a5568;
+            transform: translateX(5px);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .order-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .order-type {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .order-type.sell {
+            background: #f56565;
+            color: #ffffff;
+        }
+
+        .order-type.buy {
+            background: #48bb78;
+            color: #ffffff;
+        }
+
+        .order-quantity {
+            color: #cbd5e1;
+            font-size: 0.875rem;
+        }
+
+        .order-time {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #718096;
+            font-size: 0.875rem;
+        }
+
+        .order-status {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            padding: 0.25rem 0.75rem;
+            background: #e53e3e;
+            color: #ffffff;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .order-symbol {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .order-details {
+            color: #718096;
+            font-size: 0.875rem;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #2d3748;
+        }
+
+        .order-price {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .order-market-info {
+            text-align: right;
+            font-size: 0.875rem;
+            color: #718096;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #718096;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: #e2e8f0;
+        }
+
+        .empty-subtitle {
+            color: #718096;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1a2332;
+            border-top: 1px solid #2d3748;
+            padding: 1rem 0;
+            z-index: 100;
+        }
+
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            color: #718096;
+            transition: color 0.3s;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+        }
+
+        .nav-item:hover {
+            color: #e2e8f0;
+        }
+
+        .nav-item.active {
+            color: #4299e1;
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+        }
+
+        .nav-label {
+            font-size: 0.875rem;
+        }
+
+        /* Loading Animation */
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .loading {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tabs-container {
+                padding: 0 1rem;
+            }
+
+            .tab {
+                padding: 1rem 1.5rem;
+                font-size: 0.875rem;
+            }
+
+            .orders-container {
+                padding: 1rem;
+            }
+
+            .order-item {
+                padding: 1rem;
+            }
+
+            .order-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .order-status {
+                position: static;
+                margin-top: 0.5rem;
+                display: inline-block;
+            }
+
+            .order-footer {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
+            }
+
+            .order-market-info {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Banner -->
+    <div class="top-banner">
+        Please note that pending orders will be executed based on the prevailing bid and ask prices, not the last traded price (LTP)! May your trades be profitable and your mindset always positive!
+    </div>
+
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header-section">
+            <div class="header-content">
+                <h1 class="page-title">Orders</h1>
+                <span class="dropdown-arrow">⌄</span>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-section">
+            <div class="tabs-container">
+                <button class="tab" data-tab="open">Open</button>
+                <button class="tab" data-tab="executed">Executed</button>
+                <button class="tab active" data-tab="rejected">Rejected</button>
+            </div>
+        </div>
+
+        <!-- Orders List -->
+        <div class="orders-container" id="ordersContainer">
+            <!-- Rejected Orders (Active Tab) -->
+            <div class="orders-list" id="rejectedOrders">
+                <!-- CRUDEOIL Order -->
+                <div class="order-item">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-info">
+                                <span class="order-type sell">SELL</span>
+                                <span class="order-quantity">Qty : 100</span>
+                                <span class="order-time">
+                                    <span>🕐</span>
+                                    <span>11:46:31 AM</span>
+                                </span>
+                            </div>
+                            <div class="order-symbol">CRUDEOIL</div>
+                            <div class="order-details">17 JUL 5950 CE</div>
+                        </div>
+                        <span class="order-status">REJECTED</span>
+                    </div>
+                    <div class="order-footer">
+                        <div class="order-price">5.2</div>
+                        <div class="order-market-info">MCX Market is Closed</div>
+                    </div>
+                </div>
+
+                <!-- ASTRAL Order -->
+                <div class="order-item">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-info">
+                                <span class="order-type buy">BUY</span>
+                                <span class="order-quantity">Qty : 425</span>
+                                <span class="order-time">
+                                    <span>🕐</span>
+                                    <span>10:33:38 AM</span>
+                                </span>
+                            </div>
+                            <div class="order-symbol">ASTRAL</div>
+                            <div class="order-details">31 JUL</div>
+                        </div>
+                        <span class="order-status">REJECTED</span>
+                    </div>
+                    <div class="order-footer">
+                        <div class="order-price">1488.9</div>
+                        <div class="order-market-info">NSE Market is Closed</div>
+                    </div>
+                </div>
+
+                <!-- SBIN Order -->
+                <div class="order-item">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-info">
+                                <span class="order-type buy">BUY</span>
+                                <span class="order-quantity">Qty : 1</span>
+                                <span class="order-time">
+                                    <span>🕐</span>
+                                    <span>10:07:15 AM</span>
+                                </span>
+                            </div>
+                            <div class="order-symbol">SBIN</div>
+                            <div class="order-details">Equity</div>
+                        </div>
+                        <span class="order-status">REJECTED</span>
+                    </div>
+                    <div class="order-footer">
+                        <div class="order-price">831.7</div>
+                        <div class="order-market-info">Bid Or Ask is 0</div>
+                    </div>
+                </div>
+
+                <!-- XAGUSD Order -->
+                <div class="order-item">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-info">
+                                <span class="order-type buy">BUY</span>
+                                <span class="order-quantity">Qty : 2500000</span>
+                                <span class="order-time">
+                                    <span>🕐</span>
+                                    <span>8:39:31 AM</span>
+                                </span>
+                            </div>
+                            <div class="order-symbol">XAGUSD</div>
+                            <div class="order-details">Comex</div>
+                        </div>
+                        <span class="order-status">REJECTED</span>
+                    </div>
+                    <div class="order-footer">
+                        <div class="order-price">38.01</div>
+                        <div class="order-market-info">Max Per Order Lot is 100 For XAGUSD</div>
+                    </div>
+                </div>
+
+                <!-- GOLDM Order -->
+                <div class="order-item">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-info">
+                                <span class="order-type buy">BUY</span>
+                                <span class="order-quantity">Qty : 10</span>
+                                <span class="order-time">
+                                    <span>🕐</span>
+                                    <span>7:37:49 AM</span>
+                                </span>
+                            </div>
+                            <div class="order-symbol">GOLDM</div>
+                            <div class="order-details">05 AUG</div>
+                        </div>
+                        <span class="order-status">REJECTED</span>
+                    </div>
+                    <div class="order-footer">
+                        <div class="order-price">97205</div>
+                        <div class="order-market-info">Max Exch Lot is 100</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Open Orders (Hidden) -->
+            <div class="orders-list" id="openOrders" style="display: none;">
+                <div class="empty-state">
+                    <div class="empty-icon">📋</div>
+                    <div class="empty-title">No Open Orders</div>
+                    <div class="empty-subtitle">Your open orders will appear here</div>
+                </div>
+            </div>
+
+            <!-- Executed Orders (Hidden) -->
+            <div class="orders-list" id="executedOrders" style="display: none;">
+                <div class="empty-state">
+                    <div class="empty-icon">✅</div>
+                    <div class="empty-title">No Executed Orders</div>
+                    <div class="empty-subtitle">Your executed orders will appear here</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-items">
+            <a href="#" class="nav-item">
+                <span class="nav-icon">👁️</span>
+                <span class="nav-label">Market</span>
+            </a>
+            <a href="#" class="nav-item active">
+                <span class="nav-icon">📋</span>
+                <span class="nav-label">Orders</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⚡</span>
+                <span class="nav-label">Position</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">DEMOMAHA</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Tab switching functionality
+        const tabs = document.querySelectorAll('.tab');
+        const orderLists = {
+            open: document.getElementById('openOrders'),
+            executed: document.getElementById('executedOrders'),
+            rejected: document.getElementById('rejectedOrders')
+        };
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Hide all order lists
+                Object.values(orderLists).forEach(list => {
+                    list.style.display = 'none';
+                });
+                
+                // Show selected order list
+                const selectedTab = this.dataset.tab;
+                if (orderLists[selectedTab]) {
+                    orderLists[selectedTab].style.display = 'block';
+                }
+            });
+        });
+
+        // Bottom navigation functionality
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                navItems.forEach(n => n.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Dropdown arrow animation
+        const dropdownArrow = document.querySelector('.dropdown-arrow');
+        dropdownArrow.addEventListener('click', function() {
+            this.style.transform = this.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';
+        });
+
+        // Simulate real-time updates
+        function updateTime() {
+            const timeElements = document.querySelectorAll('.order-time span:last-child');
+            const now = new Date();
+            const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            
+            // Keep original times for rejected orders (don't update them)
+        }
+
+        // Add hover effect for order items
+        const orderItems = document.querySelectorAll('.order-item');
+        orderItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // Simulate order details view
+                console.log('Order clicked:', this.querySelector('.order-symbol').textContent);
+            });
+        });
+
+        // Mock function to add new orders (for demonstration)
+        function addMockOrder(type, orderData) {
+            const ordersList = orderLists[type];
+            if (ordersList && orderData) {
+                // Create order element and append to list
+                // This would be connected to your real-time data feed
+            }
+        }
+
+        // Refresh orders (mock function)
+        function refreshOrders() {
+            // This would fetch latest orders from your API
+            console.log('Refreshing orders...');
+        }
+
+        // Auto-refresh every 30 seconds (optional)
+        // setInterval(refreshOrders, 30000);
+    </script>
+</body>
+</html>
